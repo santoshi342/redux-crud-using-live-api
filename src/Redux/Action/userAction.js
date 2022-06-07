@@ -14,6 +14,9 @@ export const registeruser = (data) => {
         },
       })
       .then((responce) => {
+        localStorage.setItem("Token", responce.data.token);
+        localStorage.setItem("Id", JSON.stringify(responce.data.user.id));
+
         dispatch({
           type: REGISTER_USER,
           payload: responce,

@@ -1,51 +1,71 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch,useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { registeruser } from "../Redux/Action/userAction";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye } from "@fortawesome/free-solid-svg-icons";
+const eye = <FontAwesomeIcon icon={faEye} />;
 
 
 
 const Register = () => {
  
   const {register,handleSubmit,watch,formState: { errors },emailIsUnique,
-  formState: { isSubmitting },
+
 reset, 
   } = useForm();
  
   const dispatch = useDispatch();
 
   const navigate = useNavigate();
+  const getpost = useSelector((state) => state);
+  console.log('00000', getpost)
 
   const [success, setSuccess] = useState(false)
+  const [passwordShown, setPasswordShown] = useState(false);
+  const [passwordShown1, setPasswordShown1] = useState(false);
+
+  const togglePasswordVisiblity = () => {
+    setPasswordShown(passwordShown ? false : true);
+  };
+  const toggle = () => {
+    setPasswordShown1(passwordShown1 ? false : true);
+  };
   
-
   const RegisterUser = (data) => {
+    console.log('222222', data)
     reset();
-
     dispatch(registeruser(data));
-    if(data.email===''&&data.password===''&&data.confirmpassword===''){
-      success(false)
-    }else{
-      setSuccess(true)
-
-    }
-    console.log('1111', data)
-
   };
 
+  useEffect((data) => {
+    if (getpost?.post?.data?.data?.success) {
+      toast.success(`User Register successfully`);   
+      window.location.href="/dashboard"
+    }else if (getpost?.post?.showError?.response?.data?.errors){
+      toast.error(`Email has already been taken`)
+    }
+    // else if(getpost?.post?.showError?.responce?.data?.errors){
+    //   toast.error(`Password confirmation doesn't match Password`)
+    // }   
+  }, [getpost.post]);
 
   return (
-    <div><br/>
+    <div className="main-form"><br/>
       <center>
-      <h5>Registration Form!</h5><br/>
-        
-      <form onSubmit={handleSubmit(RegisterUser)}>       
+          
+      <form onSubmit={handleSubmit(RegisterUser)}  className="form"> 
+      <h5 className="regheading">Registration Form!</h5><br/>
+            
         <div className="field-form">
+       
           <input
             type="email"
             placeholder="Enter Email"
+            className="reginput"
             {...register("email", {
               required: true,
               validate: emailIsUnique})}
@@ -63,18 +83,19 @@ reset,
 
         <div className="field-form">
           <input
-            type="password"
+            type={passwordShown ? "text" : "password"}
             minLength={6}
             placeholder="Enter Password"
             {...register("password", {
               required: true})}  
           />
+           <i id ="eye-icon" className="eye" onClick={togglePasswordVisiblity}>{eye}</i>
           {errors?.password?.type === "required" && <p className="error">Password required min 6 digit*</p>}
         </div><br/>
 
         <div className="field-form">
           <input
-            type="password"
+           type={passwordShown1 ? "text" : "password"}
             minLength={6}
             placeholder="Enter Confirm Password"
             
@@ -87,6 +108,7 @@ reset,
               },
              })}
           />
+           <i id ="eye-icon" className="eye" onClick={toggle}>{eye}</i>
           {errors?.confirmpassword?.type === "required" && <p className="error">Confirm Password required*</p>}
         </div><br/>
        
@@ -98,9 +120,6 @@ reset,
         </div>
       
       </form><br/>
-     
-      {success?<h6 className="submit-msg"> User have been Registration Successfully!</h6>: <h6>  </h6>}
-  
       </center>
     </div>
   );

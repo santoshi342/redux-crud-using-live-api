@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useState, useCallback  } from "react";
+import { useState, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { showpost, deletepost, updatepost1 } from "../Redux/Action/userAction";
 import pic from "../Image/icon.png";
@@ -16,7 +16,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import addDays from "date-fns/addDays";
 import ReactPaginate from "react-paginate";
-
+import Select from "react-select";
 
 // -- function  start --
 const Dashboard = () => {
@@ -30,54 +30,16 @@ const Dashboard = () => {
   const [startDate, setStartDate] = useState(new Date());
 
   const getpost = useSelector((state) => state);
+  console.log("111111", getpost);
 
-  // start pagination code here 
-  // const getpostlen = (getpost.post.data.posts).length;
-  // console.log('11111', getpostlen)
+
   const [currentPage, setCurrentPage] = useState(null);
   const [currentItems, setCurrentItems] = useState(null);
   const [pageCount, setPageCount] = useState(0);
   const [itemOffset, setItemOffset] = useState(0);
-  
-
-  // let NUM_OF_RECORDS = (getpost.post.data.posts).length;
-  // let LIMIT = 5;
-
-  // const onPageChanged = useCallback(
-  //   (event, page) => {
-  //     event.preventDefault();
-  //     setCurrentPage(page);
-  //   },
-  //   [setCurrentPage]
-  // );
-
-  // const currentData = (getpost.post.data.posts).slice(
-  //   (currentPage - 1) * LIMIT,
-  //   (currentPage - 1) * LIMIT + LIMIT
-  // );
-  // End pagination code here 
-
-  // let itemsPerPage = 5;
-
-  // useEffect(({ itemsPerPage }) => {
-  //   // Fetch items from another resources.
-  //   const endOffset = itemOffset + itemsPerPage;
-  //   console.log(`Loading items from ${itemOffset} to ${endOffset}`);
-  //   setCurrentItems((getpost.post.data.posts).slice(itemOffset, endOffset));
-  //   setPageCount(Math.ceil((getpost.post.data.posts).length / itemsPerPage));
-  // }, [itemOffset, itemsPerPage]);
-
-  // const  onPageChanged = (event) => {
-  //   const newOffset = (event.selected * itemsPerPage) % (getpost.post.data.posts).length;
-  //   console.log(
-  //     `User requested page number ${event.selected}, which is offset ${newOffset}`
-  //   );
-  //   setItemOffset(newOffset);
-  // };
+  const [selectedValue, setSelectedValue] = useState([]);
 
 
-
-  
 
   const navigate = useNavigate();
 
@@ -87,7 +49,7 @@ const Dashboard = () => {
     dispatch(showpost());
   }, []);
 
-  // For logout button 
+  // For logout button
   const logout = (e) => {
     e.preventDefault();
     localStorage.removeItem("Token");
@@ -95,18 +57,18 @@ const Dashboard = () => {
     window.location.href = "/";
   };
 
-  // Create post 
+  // Create post
   const create = (data) => {
     navigate("/createpost");
   };
 
-  // Remove post 
+  // Remove post
   const remove = (id) => {
     console.log("removeid", id);
     dispatch(deletepost(id));
   };
 
-  // toastify pop up 
+  // toastify pop up
   useEffect(() => {
     if (getpost?.post?.deletResponse?.data?.success) {
       toast.success(`${getpost?.post?.deletResponse?.data?.message[0]}`);
@@ -118,13 +80,9 @@ const Dashboard = () => {
     if (getpost?.post?.createPost?.data?.succes) {
       toast.success("Post Created Successfully!");
     }
-  }, [
-    getpost?.post?.deletResponse?.data,
-    getpost?.post?.updatePost?.data,
-    getpost?.post?.createPost?.data,
-  ]);
+  }, [getpost.post]);
 
-  // For edit post 
+  // For edit post
   const edit = (id, title, description) => {
     SetisVisible(true);
     Setids(id);
@@ -132,7 +90,7 @@ const Dashboard = () => {
     Setdescription(description);
   };
 
-  // For update post using modal 
+  // For update post using modal
   const updatePost = (id, title, description) => {
     dispatch(updatepost1(id, title, description));
     isVisible && SetisVisible(false);
@@ -149,9 +107,42 @@ const Dashboard = () => {
 
   const filtered = !search
     ? getpost.post.data.posts
-    : getpost.post.data.posts.filter((data) =>
-         data.title.toLowerCase().includes(search.toLowerCase()) || data.description.toLowerCase().includes(search.toLowerCase() 
-    ));
+    : getpost.post.data.posts.filter(
+        (data) =>
+          data.title.toLowerCase().includes(search.toLowerCase()) ||
+          data.description.toLowerCase().includes(search.toLowerCase())
+      );
+
+  const data = [
+    {
+      value: "react",
+      label: "cerulean",
+    },
+    {
+      value: "java",
+      label: "java",
+    },
+    {
+      value: "javascript",
+      label: "javascript",
+    },
+    {
+      value: "ruby",
+      label: "ruby",
+    },
+    {
+      value: "nodejs",
+      label: "nodejs",
+    },
+    {
+      value: "python",
+      label: "python",
+    },
+  ];
+
+  const handleChange = (e) => {
+    setSelectedValue(Array.isArray(e) ? e.map((x) => x.value) : []);
+  };
 
   return (
     <div>
@@ -179,7 +170,7 @@ const Dashboard = () => {
         <img src={pic} alt="user-icon" /> <spam>User: {id}</spam>
         <br />
         <br />
-         <input
+        <input
           type="text"
           placeholder="Search for..."
           value={search}
@@ -191,6 +182,24 @@ const Dashboard = () => {
             CreatePost
           </button>
         </div>
+        <div className="dropdown">
+          <Select
+            placeholder="Select Option"
+            value={data.filter((obj) => selectedValue.includes(obj.value))} // set selected values
+            options={data} // set list of the data
+            onChange={handleChange} // assign onChange function
+            isMulti
+            isClearable
+          />
+        </div>
+        {selectedValue && (
+          <div style={{ marginTop: 20, lineHeight: "25px" }}>
+            <div>
+              <b>Selected Value: </b> {JSON.stringify(selectedValue, null, 2)}
+            </div>
+            <br />
+          </div>
+        )}
       </form>
 
       <div>
@@ -208,7 +217,6 @@ const Dashboard = () => {
           <tbody>
             {/* {getpost?.post?.data?.posts?.map((item, index) => { */}
             {filtered?.map((item, index) => {
-           
               return (
                 <tr key={index}>
                   <td>{item.id}</td>
@@ -238,7 +246,6 @@ const Dashboard = () => {
                       maxDate={addDays(new Date(), 7)}
                       onChange={(date) => setStartDate(date)}
                     />
-                    
                   </td>
                 </tr>
               );
@@ -247,18 +254,15 @@ const Dashboard = () => {
         </Table>
       </div>
 
-<Paginations
-            // totalRecords={NUM_OF_RECORDS}
-            // pageLimit={LIMIT}
-            nextLabel="next >"
-            previousLabel="< previous"
-            pageNeighbours={2}
-            // onPageChanged={onPageChanged}
-            // currentPage={currentPage}
-
-          />
-
-
+      <Paginations
+        // totalRecords={NUM_OF_RECORDS}
+        // pageLimit={LIMIT}
+        nextLabel="next >"
+        previousLabel="< previous"
+        pageNeighbours={2}
+        // onPageChanged={onPageChanged}
+        // currentPage={currentPage}
+      />
     </div>
   );
 };

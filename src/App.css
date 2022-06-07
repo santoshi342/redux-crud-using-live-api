@@ -53,10 +53,7 @@ button{
   font-weight: 500;
 
 }
-input {
-height:25px;
-width:20%;
-}
+
 .container{
   align-items: center;
 }
@@ -95,3 +92,72 @@ width:20%;
 .datepicker input {
   width:  39%;
 }
+.forgotpass{
+  margin-top: 30px;
+  padding-top: 15px;
+
+}
+.forgotbtn{
+  width: 150px;
+}
+.forgotpara{
+  font-size: 12px;
+}
+.resetpass{
+  margin-top: 30px;
+  padding-top: 15px;
+
+}
+.resetbtn{
+  width: 150px;
+}
+.resetpara{
+  font-size: 12px;
+}
+.eye{
+  position: absolute;
+
+}
+.eye:active{
+  color: rgb(124, 189, 226);
+  cursor: pointer;
+}
+#pass-wrapper{
+  position: relative;
+
+}
+#eye-icon{
+  margin-left: -20px;
+}
+
+.menu-text{
+  color:white;
+  margin-left: 50px;
+}
+
+#navmob{  
+color: white;
+margin-left: 581px;
+font-size: 13px;
+}
+
+#navemail{  
+color: white;
+font-size: 13px;
+}
+.main-form{
+  margin-top: 35px;
+}
+.form{
+  background-color: rgb(197, 194, 194);
+  width: 18rem;
+    height: 18rem;
+    border-radius: 5px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+.reginput{
+  /* margin-top: 3rem; */
+}
+.regheading{
+  padding-top: 15px;
+} 

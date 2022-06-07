@@ -12,11 +12,13 @@ const initialState = {
   data: [],
   deletResponse:[],
   showError:[],
+  showcofirmpassword:[],
   showPost:[],
   updatePost:[],
   createPost:[],
 
 };
+
 
 
 const UserReducer = (state = initialState, action) => {
@@ -29,6 +31,9 @@ const UserReducer = (state = initialState, action) => {
       return {
         ...state,
         data: action.payload,
+        showError:action.error,
+        
+
       };
       break;
     case LOGIN_USER:
@@ -56,6 +61,8 @@ const UserReducer = (state = initialState, action) => {
       return {
         ...state,
         showError: action.payload,
+        
+
       };
       break;
       case UPDATE_POST:
